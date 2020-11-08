@@ -1,10 +1,8 @@
-# Pronym Service Template - RENAME THIS!!!!
+# BridgeNet Payment Site
 
 ## Project Summary
 
-Some high-level, non-developer-friendly understanding of what this application is and why it's useful.  E.g., this is an application for users to track their time and bill clients.
-
-Do not make this more than a paragraph.
+This is a standalone service that customer service reps can use to complete payments made to BridgeNet via our payment API.
 
 ## Development Setup
 

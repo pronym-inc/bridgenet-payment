@@ -1,5 +1,5 @@
 celery[sqs]==4.4.4
-Django==3.0.7
+Django==3.0.8
 django-celery-beat==2.0.0
 django-extensions==2.2.9
 django-nose==1.4.6
@@ -16,3 +16,4 @@ redis==3.5.3
 requests==2.24.0
 sendgrid==6.4.1
 sendgrid-django==4.2.0
+git+ssh://git@github.com/pronym-inc/bridgenet-client.git@v1.0#egg=bridgenet_client

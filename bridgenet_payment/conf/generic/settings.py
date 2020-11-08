@@ -1,17 +1,33 @@
 import json
 import os
+import sys
 
 from datetime import date
 
+import requests
 from django.conf.global_settings import STATICFILES_FINDERS
 
 from kombu.utils.url import safequote
 
-secrets_path = '/etc/secrets.json'
-try:
-    secrets = json.load(open(secrets_path))
-except FileNotFoundError:
-    secrets = {}
+# Download secrets from remote server if we have a pronym secrets token.
+if 'PRONYM_SECRETS_TOKEN' in os.environ:
+    pronym_secrets_url = 'https://secrets.pronym.com/core/application/bridgenet_payment/configuration/localdev/secrets/'
+
+    response = requests.get(
+        pronym_secrets_url,
+        headers={'Authorization': f'Token {os.environ["PRONYM_SECRETS_TOKEN"]}'}
+    )
+    if response.status_code >= 400:
+        print(f'Received an error code when trying to retrieve secrets: {response.status_code} {response.text}')
+        sys.exit()
+    secrets = response.json()
+    print('Loaded secrets from localdev remote configuration on pronym secrets.')
+else:
+    secrets_path = '/etc/secrets.json'
+    try:
+        secrets = json.load(open(secrets_path))
+    except FileNotFoundError:
+        secrets = {}
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -37,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'gunicorn',
+    'bridgenet_payment.apps.core'
 ]
 
 MIDDLEWARE = [
@@ -127,7 +144,7 @@ LOG_PATH = os.path.join(VIRTUALENV_DIR, 'var/log/django/bridgenet_payment.log')
 
 ADMIN = [('Gregg Keithley', 'gregg@pronym.com')]
 
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = '/login/'
 LOGOUT_URL = '/accounts/logout/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 
@@ -157,3 +174,7 @@ MANAGERS = ADMINS
 
 USE_TZ = True
 TIME_ZONE = 'America/Chicago'
+
+BRIDGENET_API_URL_BASE = 'https://api.bridgenetins.com'
+BRIDGENET_API_USERNAME = secrets.get('bridgenet_api_username')
+BRIDGENET_API_PASSWORD = secrets.get('bridgenet_api_password')
