@@ -4,7 +4,7 @@ from bridgenet_payment.conf.generic.settings import *  # noqa
 DEBUG = False
 DEBUG_STATIC_FILES = False
 
-ALLOWED_HOSTS = ['changemetotheproductiondomain.com']
+ALLOWED_HOSTS = ['payment.bridgenetins.com']
 
 LOGGING = {
     'version': 1,
